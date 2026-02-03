@@ -39,7 +39,6 @@
                 const hh = String(now.getHours()).padStart(2, '0');
                 const mm = String(now.getMinutes()).padStart(2, '0');
                 
-                // 更新後的編號格式：YYYYMMDD-HHmm
                 const formID = `${Y}${M}${D}-${hh}${mm}`;
 
                 setFormData(p => ({
@@ -49,13 +48,19 @@
                 }));
             }, []);
 
+            const handleSubmit = () => {
+                setStatus('submitting');
+                // 增加延遲感，讓使用者知道正在傳輸
+                setTimeout(() => setStatus('submitted'), 1500);
+            };
+
             if (status === 'submitted') return (
                 <div className="min-h-screen flex items-center justify-center p-6 text-center">
                     <div className="max-w-md w-full bg-white p-12 rounded-[3rem] shadow-2xl border-t-[15px] border-sky-600 animate-card">
                         <div className="text-7xl mb-6">✅</div>
-                        <h2 className="text-3xl font-black mb-4 text-slate-800">提交成功</h2>
-                        <p className="text-slate-500 mb-10 text-lg">編號：<span className="text-sky-600 font-bold">{formData['entry.1997557929']}</span></p>
-                        <button onClick={() => window.location.reload()} className="w-full bg-sky-600 text-white py-5 rounded-3xl font-black text-xl">回首頁</button>
+                        <h2 className="text-3xl font-black text-slate-800 mb-4">紀錄已提交成功</h2>
+                        <p className="text-slate-500 mb-10 text-lg">表單編號：<span className="text-sky-600 font-bold">{formData['entry.1997557929']}</span></p>
+                        <button onClick={() => window.location.reload()} className="w-full bg-sky-600 text-white py-5 rounded-3xl font-black text-xl shadow-xl active:scale-95 transition-all">新增下一筆</button>
                     </div>
                 </div>
             );
@@ -63,41 +68,51 @@
             return (
                 <div className="min-h-screen pb-12">
                     <header className="bg-slate-900 text-white py-14 text-center shadow-xl">
-                        <h1 className="text-3xl font-black">日益智慧能源</h1>
-                        <p className="text-sky-400 mt-2 font-bold tracking-widest uppercase">異常問題紀錄單</p>
+                        <h1 className="text-3xl font-black tracking-widest">日益智慧能源</h1>
+                        <p className="text-sky-400 mt-2 font-bold uppercase tracking-widest text-xs">異常問題紀錄單</p>
                     </header>
 
                     <main className="max-w-xl mx-auto -mt-10 px-4">
-                        <iframe name="hidden_confirm" style={{display:'none'}}></iframe>
-                        <form action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSctQVHtvkom4MQ_iCxMSctMp5cvTN7ZLJSBTPvBV3GBx_1Vmw/formResponse" method="POST" target="hidden_confirm" onSubmit={() => setStatus('submitted')} className="space-y-5">
-                            
-                            <div className="bg-white p-6 rounded-[2rem] shadow-lg border-l-8 border-amber-500">
-                                <label className="block text-slate-400 font-bold text-xs uppercase">Form ID</label>
-                                <div className="text-2xl font-black">{formData['entry.1997557929']}</div>
+                        {/* 這裡的 iframe 是防止跳轉到 Google 預設頁面的核心關鍵 */}
+                        <iframe name="hidden_confirm" id="hidden_confirm" style={{display:'none'}}></iframe>
+                        
+                        <form 
+                            action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSctQVHtvkom4MQ_iCxMSctMp5cvTN7ZLJSBTPvBV3GBx_1Vmw/formResponse" 
+                            method="POST" 
+                            target="hidden_confirm" 
+                            onSubmit={handleSubmit}
+                            className="space-y-5"
+                        >
+                            <div className="bg-white p-6 rounded-[2rem] shadow-lg border-l-8 border-amber-500 animate-card">
+                                <label className="block text-slate-400 font-bold text-xs uppercase mb-1">Form ID</label>
+                                <div className="text-2xl font-black text-slate-700 tracking-wider">{formData['entry.1997557929']}</div>
                                 <input type="hidden" name="entry.1997557929" value={formData['entry.1997557929']} />
                             </div>
 
-                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-8 border-sky-600">
-                                <label className="block font-black mb-3 text-lg">2. 案場名稱 *</label>
-                                <input required type="text" name="entry.131097778" onChange={(e)=>setFormData({...formData,'entry.131097778':e.target.value})} className="w-full p-4 bg-slate-50 border-2 rounded-2xl outline-none font-bold" />
+                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-8 border-sky-600 animate-card">
+                                <label className="block font-black mb-3 text-lg text-slate-800">2. 案場名稱 *</label>
+                                <input required type="text" name="entry.131097778" onChange={(e)=>setFormData({...formData,'entry.131097778':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold transition-all" />
                             </div>
 
-                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-8 border-sky-600">
-                                <label className="block font-black mb-3 text-lg">3. 區域 *</label>
-                                <input required type="text" name="entry.980213033" onChange={(e)=>setFormData({...formData,'entry.980213033':e.target.value})} className="w-full p-4 bg-slate-50 border-2 rounded-2xl outline-none font-bold" />
+                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-8 border-sky-600 animate-card">
+                                <label className="block font-black mb-3 text-lg text-slate-800">3. 區域 *</label>
+                                <input required type="text" name="entry.980213033" onChange={(e)=>setFormData({...formData,'entry.980213033':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold transition-all" />
                             </div>
 
-                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-8 border-sky-600">
-                                <label className="block font-black mb-3 text-lg">4. 實際發生日期 *</label>
-                                <input required type="date" name="entry.327643225" value={formData['entry.327643225']} onChange={(e)=>setFormData({...formData,'entry.327643225':e.target.value})} className="w-full p-4 bg-slate-50 border-2 rounded-2xl font-bold" />
+                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-8 border-sky-600 animate-card">
+                                <label className="block font-black mb-3 text-lg text-slate-800">4. 實際發生日期 *</label>
+                                <input required type="date" name="entry.327643225" value={formData['entry.327643225']} onChange={(e)=>setFormData({...formData,'entry.327643225':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-bold text-slate-600" />
                             </div>
 
-                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-8 border-sky-600">
-                                <label className="block font-black mb-3 text-lg">5. 異常問題簡述 *</label>
-                                <textarea required name="entry.2061708184" rows="4" onChange={(e)=>setFormData({...formData,'entry.2061708184':e.target.value})} className="w-full p-4 bg-slate-50 border-2 rounded-2xl outline-none font-bold"></textarea>
+                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-8 border-sky-600 animate-card">
+                                <label className="block font-black mb-3 text-lg text-slate-800">5. 異常問題簡述 *</label>
+                                <textarea required name="entry.2061708184" rows="4" onChange={(e)=>setFormData({...formData,'entry.2061708184':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold transition-all"></textarea>
                             </div>
 
-                            <button type="submit" className="w-full py-6 rounded-[2rem] bg-slate-900 text-white text-2xl font-black shadow-xl">提交紀錄</button>
+                            <button type="submit" className="w-full py-6 mt-4 rounded-[2.5rem] bg-slate-900 text-white text-2xl font-black shadow-xl hover:bg-sky-800 active:scale-95 transition-all">
+                                {status === 'submitting' ? '正在提交...' : '確認提交紀錄'}
+                            </button>
+                            <p className="text-center text-slate-400 text-xs font-bold pt-6 tracking-widest">日益智慧能源 - 維運服務專用</p>
                         </form>
                     </main>
                 </div>
