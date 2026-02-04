@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>日益智慧能源 - 異常紀錄通報系統</title>
     
-    <link rel="apple-touch-icon" href="app-logo.png">
-    <link rel="icon" href="app-logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" href="logo.png">
 
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -15,7 +15,7 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        /* 修改背景色為較淺的藍灰色 */
+        /* 背景色調整為較淺的藍灰色 */
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #334155; -webkit-tap-highlight-color: transparent; }
         .animate-card { animation: slideIn 0.5s ease-out forwards; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -31,7 +31,7 @@
             const [status, setStatus] = useState('idle');
             const [formData, setFormData] = useState({
                 'entry.1997557929': '', 
-                'entry.1678700766': '', // 新增填表人欄位編號
+                'entry.1678700766': '', // 填表人 ID (根據預填連結修正)
                 'entry.131097778': '',  
                 'entry.980213033': '',  
                 'entry.327643225': '',  
@@ -56,7 +56,7 @@
 
             const handleSubmit = () => {
                 setStatus('submitting');
-                const gasUrl = "https://script.google.com/macros/s/AKfycbxS7zuTQw8emGzffRjTS-4omSBvr77rQin1wLcr8R7o16VzxBw6Wzf9mMr17ceHP7c/exec";
+                const gasUrl = "https://script.google.com/macros/s/AKfycbS7zuTQw8emGzffRjTS-4omSBvr77rQin1wLcr8R7o16VzxBw6Wzf9mMr17ceHP7c/exec";
                 
                 fetch(gasUrl, {
                     method: "POST",
@@ -64,7 +64,7 @@
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: new URLSearchParams({
                         "id": formData['entry.1997557929'],
-                        "user": formData['entry.1678700766'], // 對應 GAS 接收 user 參數
+                        "user": formData['entry.1678700766'],
                         "site": formData['entry.131097778'],
                         "area": formData['entry.980213033'],
                         "date": formData['entry.327643225'],
@@ -114,20 +114,18 @@
                                 <input type="hidden" name="entry.1997557929" value={formData['entry.1997557929']} />
                             </div>
 
-                            {/* 1. 填表人員 (新增) */}
                             <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
-                                <label className="block text-slate-800 font-black mb-3 text-lg">1. 填表人員 *</label>
+                                <label className="block text-slate-800 font-black mb-3 text-lg underline decoration-sky-500 decoration-4">1. 填表人員 *</label>
                                 <input required type="text" name="entry.1678700766" onChange={(e)=>setFormData({...formData,'entry.1678700766':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold" placeholder="輸入您的姓名" />
                             </div>
 
                             <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
-                                <label className="block text-slate-800 font-black mb-3 text-lg">2. 案場名稱 *</label>
+                                <label className="block text-slate-800 font-black mb-3 text-lg underline decoration-sky-500 decoration-4">2. 案場名稱 *</label>
                                 <input required type="text" name="entry.131097778" onChange={(e)=>setFormData({...formData,'entry.131097778':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold" placeholder="輸入案場名稱" />
                             </div>
 
-                            {/* 3. 區域 (改為下拉選單) */}
                             <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
-                                <label className="block text-slate-800 font-black mb-3 text-lg">3. 區域選擇 *</label>
+                                <label className="block text-slate-800 font-black mb-3 text-lg underline decoration-sky-500 decoration-4">3. 區域選擇 *</label>
                                 <select required name="entry.980213033" onChange={(e)=>setFormData({...formData,'entry.980213033':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold">
                                     <option value="">請點擊選擇區域</option>
                                     <option value="北部">北部</option>
@@ -139,17 +137,17 @@
                             </div>
 
                             <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
-                                <label className="block text-slate-800 font-black mb-3 text-lg">4. 實際發生日期 *</label>
+                                <label className="block text-slate-800 font-black mb-3 text-lg underline decoration-sky-500 decoration-4">4. 實際發生日期 *</label>
                                 <input required type="date" name="entry.327643225" value={formData['entry.327643225']} onChange={(e)=>setFormData({...formData,'entry.327643225':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-bold text-slate-600 shadow-inner" />
                             </div>
 
                             <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
-                                <label className="block text-slate-800 font-black mb-3 text-lg">5. 異常問題簡述 *</label>
+                                <label className="block text-slate-800 font-black mb-3 text-lg underline decoration-sky-500 decoration-4">5. 異常問題簡述 *</label>
                                 <textarea required name="entry.2061708184" rows="4" onChange={(e)=>setFormData({...formData,'entry.2061708184':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold" placeholder="請詳細描述異常內容..."></textarea>
                             </div>
 
                             <button type="submit" className="w-full py-6 mt-4 rounded-[2.5rem] bg-slate-900 text-white text-2xl font-black shadow-2xl hover:bg-sky-800 transition-all">
-                                {status === 'submitting' ? '正在提交...' : '確認提交紀錄'}
+                                確認提交紀錄
                             </button>
                         </form>
                     </main>
