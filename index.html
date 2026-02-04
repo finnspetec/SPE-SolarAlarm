@@ -48,26 +48,28 @@
                 }));
             }, []);
 
-            const handleSubmit = () => {
-                setStatus('submitting');
+const handleSubmit = (event) => {
+                const form = event.target;
                 const gasUrl = "https://script.google.com/macros/s/AKfycbS7zuTQw8emGzffRjTS-4omSBvr77rQin1wLcr8R7o16VzxBw6Wzf9mMr17ceHP7c/exec";
                 
-                // 強制確保區域文字沒有多餘空格
-                const cleanArea = formData['entry.980213033'].trim();
+                // 1. 抓取當下表單內容發送 LINE 通知
+                const params = new URLSearchParams({
+                    "id": form["entry.1997557929"].value,
+                    "user": form["entry.1678700766"].value,
+                    "site": form["entry.131097778"].value,
+                    "area": form["entry.980213033"].value,
+                    "date": form["entry.327643225"].value,
+                    "issue": form["entry.2061708184"].value
+                });
 
                 fetch(gasUrl, {
                     method: "POST",
                     mode: "no-cors",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: new URLSearchParams({
-                        "id": formData['entry.1997557929'],
-                        "user": formData['entry.1678700766'],
-                        "site": formData['entry.131097778'],
-                        "area": cleanArea,
-                        "date": formData['entry.327643225'],
-                        "issue": formData['entry.2061708184']
-                    })
+                    body: params
                 });
+
+                // --- 這裡銜接您原本第 72 行的邏輯，不要刪除下方的 setStatus ---
 
                 setTimeout(() => {
                     setStatus('submitted');
