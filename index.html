@@ -15,7 +15,8 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; -webkit-tap-highlight-color: transparent; }
+        /* 修改背景色為較淺的藍灰色 */
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #334155; -webkit-tap-highlight-color: transparent; }
         .animate-card { animation: slideIn 0.5s ease-out forwards; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -30,7 +31,7 @@
             const [status, setStatus] = useState('idle');
             const [formData, setFormData] = useState({
                 'entry.1997557929': '', 
-                'entry.1678700766': '', // 新增：填表人
+                'entry.1678700766': '', // 新增填表人欄位編號
                 'entry.131097778': '',  
                 'entry.980213033': '',  
                 'entry.327643225': '',  
@@ -63,7 +64,7 @@
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: new URLSearchParams({
                         "id": formData['entry.1997557929'],
-                        "user": formData['entry.1678700766'], // 傳送填表人給 LINE
+                        "user": formData['entry.1678700766'], // 對應 GAS 接收 user 參數
                         "site": formData['entry.131097778'],
                         "area": formData['entry.980213033'],
                         "date": formData['entry.327643225'],
@@ -113,7 +114,7 @@
                                 <input type="hidden" name="entry.1997557929" value={formData['entry.1997557929']} />
                             </div>
 
-                            {/* 1. 填表人員 */}
+                            {/* 1. 填表人員 (新增) */}
                             <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
                                 <label className="block text-slate-800 font-black mb-3 text-lg">1. 填表人員 *</label>
                                 <input required type="text" name="entry.1678700766" onChange={(e)=>setFormData({...formData,'entry.1678700766':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold" placeholder="輸入您的姓名" />
