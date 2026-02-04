@@ -12,12 +12,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; -webkit-tap-highlight-color: transparent; }
-        .animate-card { animation: slideIn 0.5s ease-out forwards; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        body { 
+            font-family: 'Noto Sans TC', sans-serif; 
+            background: url('https://images.unsplash.com/photo-1509391366360-fe5bb6583e03?auto=format&fit=crop&q=80&w=2000') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .animate-card { animation: slideIn 0.6s ease-out forwards; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="text-slate-800">
+<body class="text-slate-800 min-h-screen">
     <div id="root"></div>
     <script type="text/babel">
         const { useState, useEffect } = React;
@@ -25,12 +35,12 @@
         const App = () => {
             const [status, setStatus] = useState('idle');
             const [formData, setFormData] = useState({
-                'entry.1997557929': '', // 表單編號
-                'entry.user_name': '',   // 填表人 (新增)
-                'entry.131097778': '',  // 案場名稱
+                'entry.1997557929': '', // 編號
+                'entry.1678700766': '', // 填表人
+                'entry.131097778': '',  // 案場
                 'entry.980213033': '',  // 區域
                 'entry.327643225': '',  // 日期
-                'entry.2061708184': ''  // 異常問題
+                'entry.2061708184': ''  // 內容
             });
 
             useEffect(() => {
@@ -49,70 +59,72 @@
 
             const handleSubmit = () => {
                 setStatus('submitting');
-                const gasUrl = "https://script.google.com/macros/s/AKfycbxS7zuTQw8emGzffRjTS-4omSBvr77rQin1wLcr8R7o16VzxBw6Wzf9mMr17ceHP7c/exec";
                 
+                // 🚀 發送 LINE 通知 (透過 GAS)
+                const gasUrl = "https://script.google.com/macros/s/AKfycbxS7zuTQw8emGzffRjTS-4omSBvr77rQin1wLcr8R7o16VzxBw6Wzf9mMr17ceHP7c/exec";
                 fetch(gasUrl, {
                     method: "POST",
                     mode: "no-cors",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: new URLSearchParams({
                         "id": formData['entry.1997557929'],
-                        "user": formData['entry.user_name'],
+                        "user": formData['entry.1678700766'],
                         "site": formData['entry.131097778'],
                         "area": formData['entry.980213033'],
                         "date": formData['entry.327643225'],
                         "issue": formData['entry.2061708184']
                     })
                 });
-
-                setTimeout(() => {
-                    setStatus('submitted');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 1500);
+                return true; // 繼續讓 Form 提交到隱藏的 iframe
             };
 
             if (status === 'submitted') return (
-                <div className="min-h-screen flex items-center justify-center p-6 text-center">
-                    <div className="max-w-md w-full bg-white p-12 rounded-[3rem] shadow-2xl border-t-[15px] border-sky-600 animate-card">
-                        <div className="text-7xl mb-6">✅</div>
-                        <h2 className="text-3xl font-black text-slate-800 mb-4">通報成功！</h2>
-                        <button onClick={() => window.location.reload()} className="w-full bg-sky-600 text-white py-5 rounded-3xl font-black text-xl shadow-xl active:scale-95 transition-all">下一筆通報</button>
+                <div className="min-h-screen flex items-center justify-center p-6 text-center bg-black/30">
+                    <div className="max-w-md w-full glass-morphism p-12 rounded-[3rem] shadow-2xl animate-card">
+                        <div className="text-7xl mb-6">🌤️</div>
+                        <h2 className="text-3xl font-black text-sky-700 mb-4">通報成功！</h2>
+                        <p className="text-slate-600 mb-8 font-medium">資料已回傳後台並通知 LINE。</p>
+                        <button onClick={() => window.location.reload()} className="w-full bg-sky-600 text-white py-5 rounded-2xl font-black text-xl shadow-lg active:scale-95">下一筆通報</button>
                     </div>
                 </div>
             );
 
             return (
-                <div className="min-h-screen pb-12">
-                    <header className="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 text-white py-14 px-6 text-center shadow-2xl">
-                        <h1 className="text-3xl font-black tracking-widest text-white">日益智慧能源</h1>
-                        <p className="text-sky-400 mt-2 font-bold text-sm tracking-[0.3em] uppercase">異常問題紀錄單</p>
+                <div className="min-h-screen flex flex-col items-center">
+                    <header className="w-full py-12 px-6 text-center">
+                        <h1 className="text-4xl font-black tracking-widest text-white drop-shadow-lg">日益智慧能源</h1>
+                        <p className="text-sky-100 mt-2 font-bold text-sm tracking-[0.4em] uppercase drop-shadow-md">Solar Maintenance</p>
                     </header>
 
-                    <main className="max-w-xl mx-auto -mt-10 px-4">
-                        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-5">
-                            {/* 編號卡片 */}
-                            <div className="bg-white p-6 rounded-[2rem] shadow-lg border-l-[10px] border-amber-500 animate-card">
-                                <label className="block text-slate-400 font-bold mb-1 text-xs tracking-wider uppercase">Form ID</label>
+                    <main className="w-full max-w-xl px-4 pb-20">
+                        <iframe name="hidden_confirm" style={{display:'none'}} onLoad={() => { if(status === 'submitting') setStatus('submitted'); }}></iframe>
+                        <form 
+                            action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSctQVHtvkom4MQ_iCxMSctMp5cvTN7ZLJSBTPvBV3GBx_1Vmw/formResponse" 
+                            method="POST" 
+                            target="hidden_confirm" 
+                            onSubmit={handleSubmit}
+                            className="space-y-6"
+                        >
+                            <div className="glass-morphism p-6 rounded-[2rem] shadow-xl animate-card border-t-4 border-amber-400">
+                                <label className="block text-sky-700 font-bold mb-1 text-xs tracking-wider uppercase">Form ID</label>
                                 <div className="text-2xl font-black text-slate-700">{formData['entry.1997557929']}</div>
+                                <input type="hidden" name="entry.1997557929" value={formData['entry.1997557929']} />
                             </div>
 
-                            {/* 1. 填表人 (新增) */}
-                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
+                            <div className="glass-morphism p-7 rounded-[2.5rem] shadow-xl animate-card border-l-8 border-sky-500">
                                 <label className="block text-slate-800 font-black mb-3 text-lg">1. 填表人員 *</label>
-                                <input required type="text" onChange={(e)=>setFormData({...formData,'entry.user_name':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold" placeholder="輸入您的姓名" />
+                                <input required type="text" name="entry.1678700766" onChange={(e)=>setFormData({...formData,'entry.1678700766':e.target.value})} className="w-full p-4 bg-white/50 border-2 border-sky-100 rounded-2xl focus:border-sky-500 outline-none font-bold text-lg" placeholder="您的姓名" />
                             </div>
 
-                            {/* 2. 案場名稱 */}
-                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
+                            <div className="glass-morphism p-7 rounded-[2.5rem] shadow-xl animate-card border-l-8 border-sky-500">
                                 <label className="block text-slate-800 font-black mb-3 text-lg">2. 案場名稱 *</label>
-                                <input required type="text" onChange={(e)=>setFormData({...formData,'entry.131097778':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold" placeholder="輸入案場名稱" />
+                                <input required type="text" name="entry.131097778" onChange={(e)=>setFormData({...formData,'entry.131097778':e.target.value})} className="w-full p-4 bg-white/50 border-2 border-sky-100 rounded-2xl focus:border-sky-500 outline-none font-bold text-lg" placeholder="輸入案場名稱" />
                             </div>
 
-                            {/* 3. 區域 (改下拉選單) */}
-                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
+                            <div className="glass-morphism p-7 rounded-[2.5rem] shadow-xl animate-card border-l-8 border-sky-500">
                                 <label className="block text-slate-800 font-black mb-3 text-lg">3. 區域選擇 *</label>
-                                <select required onChange={(e)=>setFormData({...formData,'entry.980213033':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold appearance-none">
-                                    <option value="">請選擇區域</option>
+                                <select required name="entry.980213033" onChange={(e)=>setFormData({...formData,'entry.980213033':e.target.value})} className="w-full p-4 bg-white/50 border-2 border-sky-100 rounded-2xl focus:border-sky-500 outline-none font-bold text-lg appearance-none">
+                                    <option value="">點擊選擇區域</option>
                                     <option value="北部">北部</option>
                                     <option value="中部">中部</option>
                                     <option value="南部">南部</option>
@@ -121,20 +133,18 @@
                                 </select>
                             </div>
 
-                            {/* 4. 實際發生日期 */}
-                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
+                            <div className="glass-morphism p-7 rounded-[2.5rem] shadow-xl animate-card border-l-8 border-sky-500">
                                 <label className="block text-slate-800 font-black mb-3 text-lg">4. 實際發生日期 *</label>
-                                <input required type="date" value={formData['entry.327643225']} onChange={(e)=>setFormData({...formData,'entry.327643225':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-bold text-slate-600 shadow-inner" />
+                                <input required type="date" name="entry.327643225" value={formData['entry.327643225']} onChange={(e)=>setFormData({...formData,'entry.327643225':e.target.value})} className="w-full p-4 bg-white/50 border-2 border-sky-100 rounded-2xl font-bold text-lg text-slate-600" />
                             </div>
 
-                            {/* 5. 異常問題簡述 */}
-                            <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
+                            <div className="glass-morphism p-7 rounded-[2.5rem] shadow-xl animate-card border-l-8 border-sky-500">
                                 <label className="block text-slate-800 font-black mb-3 text-lg">5. 異常問題簡述 *</label>
-                                <textarea required rows="4" onChange={(e)=>setFormData({...formData,'entry.2061708184':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-sky-500 focus:bg-white outline-none font-bold" placeholder="請詳細描述異常內容..."></textarea>
+                                <textarea required name="entry.2061708184" rows="4" onChange={(e)=>setFormData({...formData,'entry.2061708184':e.target.value})} className="w-full p-4 bg-white/50 border-2 border-sky-100 rounded-2xl focus:border-sky-500 outline-none font-bold text-lg" placeholder="請詳細描述異常內容..."></textarea>
                             </div>
 
-                            <button type="submit" className="w-full py-6 mt-4 rounded-[2.5rem] bg-slate-900 text-white text-2xl font-black shadow-2xl hover:bg-sky-800 transition-all">
-                                {status === 'submitting' ? '正在提交...' : '確認提交紀錄'}
+                            <button type="submit" className="w-full py-6 mt-4 rounded-3xl bg-sky-600 text-white text-2xl font-black shadow-2xl hover:bg-sky-700 active:scale-95 transition-all">
+                                確認提交維運紀錄
                             </button>
                         </form>
                     </main>
