@@ -12,9 +12,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #334155; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #475569; -webkit-tap-highlight-color: transparent; }
         .animate-card { animation: slideIn 0.5s ease-out forwards; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* 避免手機版 Select 文字跑掉 */
+        select { background-color: #f8fafc !important; }
     </style>
 </head>
 <body class="text-slate-800">
@@ -46,10 +48,13 @@
                 }));
             }, []);
 
-            // ⚠️ 完全套用您「成功回傳版」的 handleSubmit 邏輯
             const handleSubmit = () => {
                 setStatus('submitting');
                 const gasUrl = "https://script.google.com/macros/s/AKfycbS7zuTQw8emGzffRjTS-4omSBvr77rQin1wLcr8R7o16VzxBw6Wzf9mMr17ceHP7c/exec";
+                
+                // 強制確保區域文字沒有多餘空格
+                const cleanArea = formData['entry.980213033'].trim();
+
                 fetch(gasUrl, {
                     method: "POST",
                     mode: "no-cors",
@@ -58,11 +63,12 @@
                         "id": formData['entry.1997557929'],
                         "user": formData['entry.1678700766'],
                         "site": formData['entry.131097778'],
-                        "area": formData['entry.980213033'],
+                        "area": cleanArea,
                         "date": formData['entry.327643225'],
                         "issue": formData['entry.2061708184']
                     })
                 });
+
                 setTimeout(() => {
                     setStatus('submitted');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -82,7 +88,7 @@
             return (
                 <div className="min-h-screen pb-12">
                     <header className="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 text-white py-14 px-6 text-center shadow-2xl">
-                        <h1 className="text-3xl font-black tracking-widest text-white">日益智慧能源</h1>
+                        <h1 className="text-3xl font-black tracking-widest text-white uppercase">日益智慧能源</h1>
                         <p className="text-sky-400 mt-2 font-bold text-sm tracking-[0.3em] uppercase underline decoration-green-500">異常問題紀錄單</p>
                     </header>
                     <main className="max-w-xl mx-auto -mt-10 px-4">
@@ -112,7 +118,7 @@
 
                             <div className="bg-white p-7 rounded-[2rem] shadow-lg border-l-[10px] border-sky-600 animate-card">
                                 <label className="block text-slate-800 font-black mb-3 text-lg underline decoration-sky-500">3. 區域選擇 *</label>
-                                <select required name="entry.980213033" onChange={(e)=>setFormData({...formData,'entry.980213033':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-bold focus:bg-white outline-none">
+                                <select required name="entry.980213033" onChange={(e)=>setFormData({...formData,'entry.980213033':e.target.value})} className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl font-bold focus:bg-white">
                                     <option value="">請點擊選擇區域</option>
                                     <option value="北區">北區</option>
                                     <option value="中區">中區</option>
